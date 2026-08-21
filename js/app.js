@@ -23,7 +23,7 @@ async function askQuestion() {
       return;
     }
 
-    // Pitching results
+    // PITCHING RESULTS
     if (data.ERA !== undefined) {
       answer.innerHTML = `
         <strong>${data.player}</strong><br><br>
@@ -43,7 +43,7 @@ async function askQuestion() {
       return;
     }
 
-    // Hitting results
+    // HITTING RESULTS
     answer.innerHTML = `
       <strong>${data.player}</strong><br><br>
 
