@@ -102,6 +102,10 @@ const last15 = splits
     const url = new URL(req.url, `http://${req.headers.host}`);
     const question = url.searchParams.get("question");
 
+
+
+ 
+
     if (!question) {
       res.writeHead(400, {
         "Content-Type": "application/json"
@@ -115,12 +119,39 @@ const last15 = splits
 
       return;
     }
+   const sinceMatch = question.match(
+  /\bsince\s+([A-Za-z]+\s+\d{1,2},?\s+\d{4})/i
+);
 
-    const match = question.match(
-      /(.+?)\s+(?:ops|avg|obp|slg)\s+(?:in|over|for)\s+(?:his|their|the)?\s*(?:last\s+)?(\d+)\s+games?/i
+let startDate = null;
+
+if (sinceMatch) {
+  startDate = new Date(sinceMatch[1]);
+
+  if (isNaN(startDate.getTime())) {
+    res.writeHead(400, {
+      "Content-Type": "application/json"
+    });
+
+    res.end(
+      JSON.stringify({
+        error: "I couldn't understand that date."
+      })
     );
 
-    if (!match) {
+    return;
+  }
+} 
+
+    const match = question.match(
+  /(.+?)\s+(?:ops|avg|obp|slg)\s+(?:in|over|for)\s+(?:his|their|the)?\s*(?:last\s+)?(\d+)\s+games?/i
+);
+
+const sincePlayerMatch = question.match(
+  /(.+?)\s+(?:ops|avg|obp|slg)\s+since\s+/i
+);
+
+    if (!match && !sincePlayerMatch) {
       res.writeHead(400, {
         "Content-Type": "application/json"
       });
@@ -134,8 +165,13 @@ const last15 = splits
       return;
     }
 
-    const playerName = match[1].trim();
-    const numberOfGames = parseInt(match[2]);
+    const playerName = match
+  ? match[1].trim()
+  : sincePlayerMatch[1].trim();
+
+const numberOfGames = match
+  ? parseInt(match[2])
+  : null;
     const seasonMatch = question.match(/\b(19\d{2}|20\d{2})\b/);
 const season = seasonMatch ? parseInt(seasonMatch[1]) : 2026;
 
@@ -174,9 +210,17 @@ for (const seasonYear of seasonsToFetch) {
   splits.push(...seasonSplits);
 }
 
-    const games = splits
-      .sort((a, b) => new Date(a.date) - new Date(b.date))
-      .slice(-numberOfGames);
+    let games;
+
+if (startDate) {
+  games = splits
+    .filter(game => new Date(game.date) >= startDate)
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+} else {
+  games = splits
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .slice(-numberOfGames);
+}
 
     let atBats = 0;
     let hits = 0;
