@@ -159,11 +159,20 @@ const season = seasonMatch ? parseInt(seasonMatch[1]) : 2026;
       return;
     }
 
-    const statsResponse = await axios.get(
-      `https://statsapi.mlb.com/api/v1/people/${player.id}/stats?stats=gameLog&group=hitting&season=${season}`
-    );
+    const seasonsToFetch = [2024, 2025, 2026];
 
-    const splits = statsResponse.data.stats?.[0]?.splits || [];
+let splits = [];
+
+for (const seasonYear of seasonsToFetch) {
+  const statsResponse = await axios.get(
+    `https://statsapi.mlb.com/api/v1/people/${player.id}/stats?stats=gameLog&group=hitting&season=${seasonYear}`
+  );
+
+  const seasonSplits =
+    statsResponse.data.stats?.[0]?.splits || [];
+
+  splits.push(...seasonSplits);
+}
 
     const games = splits
       .sort((a, b) => new Date(a.date) - new Date(b.date))
