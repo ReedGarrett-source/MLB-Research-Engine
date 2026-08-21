@@ -157,12 +157,15 @@ if (sinceMatch) {
     const match = question.match(
   /(.+?)\s+(?:ops|avg|obp|slg)\s+(?:in|over|for)\s+(?:his|their|the)?\s*(?:last\s+)?(\d+)\s+games?/i
 );
+    const pitchingMatch = question.match(
+  /(.+?)\s+(?:era|whip|strikeouts|k|walks|bb)\s+(?:in|over|for)\s+(?:his|their|the)?\s*(?:last\s+)?(\d+)\s+(?:games?|starts?)/i
+);
 
 const sincePlayerMatch = question.match(
   /(.+?)\s+(?:ops|avg|obp|slg)\s+since\s+/i
 );
 
-    if (!match && !sincePlayerMatch) {
+if (!match && !pitchingMatch && !sincePlayerMatch) {
       res.writeHead(400, {
         "Content-Type": "application/json"
       });
@@ -178,10 +181,14 @@ const sincePlayerMatch = question.match(
 
     const playerName = match
   ? match[1].trim()
+  : pitchingMatch
+  ? pitchingMatch[1].trim()
   : sincePlayerMatch[1].trim();
 
 const numberOfGames = match
   ? parseInt(match[2])
+  : pitchingMatch
+  ? parseInt(pitchingMatch[2])
   : null;
     const seasonMatch = question.match(/\b(19\d{2}|20\d{2})\b/);
 const season = seasonMatch ? parseInt(seasonMatch[1]) : 2026;
