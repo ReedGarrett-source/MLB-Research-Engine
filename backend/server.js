@@ -7,7 +7,7 @@ if (req.url.startsWith("/api/mlb/last15/")) {
     const playerId = req.url.replace("/api/mlb/last15/", "");
 
     const response = await axios.get(
-      `https://statsapi.mlb.com/api/v1/people/${playerId}/stats?stats=gameLog&group=hitting&season=2026`
+      `https://statsapi.mlb.com/api/v1/people/${playerId}/stats?stats=gameLog&group=hitting&season=${season}`
     );
 
     const splits = response.data.stats?.[0]?.splits || [];
@@ -136,6 +136,8 @@ const last15 = splits
 
     const playerName = match[1].trim();
     const numberOfGames = parseInt(match[2]);
+    const seasonMatch = question.match(/\b(19\d{2}|20\d{2})\b/);
+const season = seasonMatch ? parseInt(seasonMatch[1]) : 2026;
 
     const playerResponse = await axios.get(
       `https://statsapi.mlb.com/api/v1/people/search?names=${encodeURIComponent(playerName)}`
@@ -158,7 +160,7 @@ const last15 = splits
     }
 
     const statsResponse = await axios.get(
-      `https://statsapi.mlb.com/api/v1/people/${player.id}/stats?stats=gameLog&group=hitting&season=2026`
+      `https://statsapi.mlb.com/api/v1/people/${player.id}/stats?stats=gameLog&group=hitting&season=${season}`
     );
 
     const splits = statsResponse.data.stats?.[0]?.splits || [];
@@ -209,8 +211,9 @@ const last15 = splits
       JSON.stringify({
         question,
         player: player.fullName,
-        games: games.length,
-        OPS: ops.toFixed(3)
+      games: games.length,
+season,
+OPS: ops.toFixed(3)
       })
     );
 
@@ -235,7 +238,7 @@ const last15 = splits
     const playerId = req.url.replace("/api/mlb/games/", "");
 
     const response = await axios.get(
-      `https://statsapi.mlb.com/api/v1/people/${playerId}/stats?stats=gameLog&group=hitting&season=2026`
+      `https://statsapi.mlb.com/api/v1/people/${playerId}/stats?stats=gameLog&group=hitting&season=${season}`
     );
 
     res.writeHead(200, {
