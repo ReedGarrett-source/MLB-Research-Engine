@@ -23,11 +23,27 @@ async function askQuestion() {
       return;
     }
 
-    answer.innerHTML = `
-      <strong>${data.player}</strong><br><br>
-      Games: ${data.games}<br>
-      OPS: ${data.OPS}
-    `;
+answer.innerHTML = `
+  <strong>${data.player}</strong><br><br>
+
+  Games: ${data.games}<br>
+  AB: ${data.atBats}<br>
+  H: ${data.hits}<br>
+  R: ${data.runs}<br>
+  2B: ${data.doubles}<br>
+  3B: ${data.triples}<br>
+  HR: ${data.homeRuns}<br>
+  RBI: ${data.rbi}<br>
+  BB: ${data.walks}<br>
+  K: ${data.strikeOuts}<br>
+  SB: ${data.stolenBases}<br>
+  CS: ${data.caughtStealing}<br><br>
+
+  AVG: ${data.battingAverage}<br>
+  OBP: ${data.onBasePercentage}<br>
+  SLG: ${data.sluggingPercentage}<br>
+  <strong>OPS: ${data.OPS}</strong>
+`;
   } catch (error) {
     answer.textContent =
       "Unable to connect to the MLB Research Engine.";
