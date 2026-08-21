@@ -1,31 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Baseball Intelligence</title>
 
-  <link rel="stylesheet" href="style.css?v=4">
+  <link
+    rel="stylesheet"
+    href="style.css?v=4"
+  >
 
   <script>
-    // Apply saved/system theme before the page loads
-    const savedTheme = localStorage.getItem("theme");
+
+    const savedTheme =
+      localStorage.getItem("theme");
 
     if (savedTheme === "light") {
+
       document.documentElement.classList.add("light");
+
     } else if (savedTheme === "dark") {
+
       document.documentElement.classList.add("dark");
+
     } else if (
       window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: light)").matches
+      window.matchMedia(
+        "(prefers-color-scheme: light)"
+      ).matches
     ) {
+
       document.documentElement.classList.add("light");
+
+    } else {
+
+      document.documentElement.classList.add("dark");
+
     }
+
   </script>
+
 </head>
 
+
 <body>
+
 
   <header class="top-bar">
 
@@ -42,16 +68,24 @@
 
   <main>
 
+
     <section class="hero">
 
       <div class="badge">
         MLB DATA &amp; RESEARCH
       </div>
 
+
       <h1>
+
         Baseball
-        <span>Intelligence</span>
+
+        <span>
+          Intelligence
+        </span>
+
       </h1>
+
 
       <p>
         Ask questions. Get the numbers.
@@ -69,6 +103,7 @@
         autocomplete="off"
       >
 
+
       <button
         onclick="askQuestion()"
         class="search-button"
@@ -82,7 +117,10 @@
 
     <div class="examples">
 
-      <span>Try:</span>
+      <span>
+        Try:
+      </span>
+
 
       <button
         onclick="setQuestion('Pete Alonso HR in his last 10 games')"
@@ -91,12 +129,14 @@
         HR in last 10 games
       </button>
 
+
       <button
         onclick="setQuestion('Kodai Senga ERA in his last 10 games')"
         type="button"
       >
         Pitcher ERA
       </button>
+
 
       <button
         onclick="setQuestion('Juan Soto OPS in his last 15 games')"
@@ -110,11 +150,14 @@
 
     <div id="answer"></div>
 
+
   </main>
 
 
   <footer>
+
     Baseball Intelligence • MLB data &amp; research
+
   </footer>
 
 
@@ -123,75 +166,21 @@
 
   <script>
 
-    const themeToggle =
-      document.getElementById("themeToggle");
-
-
-    function updateThemeButton() {
-
-      const isLight =
-        document.documentElement.classList.contains("light");
-
-      themeToggle.textContent =
-        isLight
-          ? "Dark Mode"
-          : "Light Mode";
-    }
-
-
-    themeToggle.addEventListener(
-      "click",
-      function () {
-
-        const isCurrentlyLight =
-          document.documentElement.classList.contains("light");
-
-
-        if (isCurrentlyLight) {
-
-          document.documentElement.classList.remove("light");
-
-          document.documentElement.classList.add("dark");
-
-          localStorage.setItem(
-            "theme",
-            "dark"
-          );
-
-        } else {
-
-          document.documentElement.classList.remove("dark");
-
-          document.documentElement.classList.add("light");
-
-          localStorage.setItem(
-            "theme",
-            "light"
-          );
-
-        }
-
-        updateThemeButton();
-
-      }
-    );
-
-
     function setQuestion(question) {
 
       const input =
         document.getElementById("question");
 
-      input.value = question;
+      input.value =
+        question;
 
       input.focus();
 
     }
 
-
-    updateThemeButton();
-
   </script>
 
+
 </body>
+
 </html>
