@@ -2,7 +2,18 @@ const http = require("http");
 const axios = require("axios");
 
 const server = http.createServer(async (req, res) => {
-if (req.url.startsWith("/api/mlb/last15/")) {
+
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  if (req.url.startsWith("/api/mlb/last15/")) {
   try {
     const playerId = req.url.replace("/api/mlb/last15/", "");
 
