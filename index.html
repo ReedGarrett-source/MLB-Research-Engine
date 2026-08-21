@@ -13,13 +13,13 @@
   BASEBALL INTELLIGENCE
 </div>
 <button id="themeToggle" class="theme-toggle">
-  ☀️ Light
+  Light Mode
 </button>
   </header>
   <main>
 <section class="hero">
   <div class="badge">
-    ⚾ MLB DATA &amp; RESEARCH
+    MLB DATA &amp; RESEARCH
   </div>
   <h1>
     Baseball
@@ -75,20 +75,24 @@
         document.body.classList.contains("light");
       themeToggle.textContent =
         isLight
-          ? "🌙 Dark"
-          : "☀️ Light";
+          ? "Dark Mode"
+          : "Light Mode";
     }
-    themeToggle.addEventListener("click", () => {
+    themeToggle.addEventListener("click", function () {
       document.body.classList.toggle("light");
-      localStorage.setItem(
-        "theme",
+      const currentTheme =
         document.body.classList.contains("light")
           ? "light"
-          : "dark"
+          : "dark";
+      localStorage.setItem(
+        "theme",
+        currentTheme
       );
       updateThemeButton();
     });
-    if (localStorage.getItem("theme") === "light") {
+    const savedTheme =
+      localStorage.getItem("theme");
+    if (savedTheme === "light") {
       document.body.classList.add("light");
     }
     updateThemeButton();
