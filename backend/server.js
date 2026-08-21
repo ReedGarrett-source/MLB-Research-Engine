@@ -223,22 +223,38 @@ if (startDate) {
 }
 
     let atBats = 0;
-    let hits = 0;
-    let walks = 0;
-    let hitByPitch = 0;
-    let sacrificeFlies = 0;
-    let totalBases = 0;
+let hits = 0;
+let runs = 0;
+let doubles = 0;
+let triples = 0;
+let homeRuns = 0;
+let rbi = 0;
+let walks = 0;
+let strikeOuts = 0;
+let hitByPitch = 0;
+let sacrificeFlies = 0;
+let stolenBases = 0;
+let caughtStealing = 0;
+let totalBases = 0;
 
     for (const game of games) {
-      const stat = game.stat;
+  const stat = game.stat;
 
-      atBats += stat.atBats || 0;
-      hits += stat.hits || 0;
-      walks += stat.baseOnBalls || 0;
-      hitByPitch += stat.hitByPitch || 0;
-      sacrificeFlies += stat.sacFlies || 0;
-      totalBases += stat.totalBases || 0;
-    }
+  atBats += stat.atBats || 0;
+  hits += stat.hits || 0;
+  runs += stat.runs || 0;
+  doubles += stat.doubles || 0;
+  triples += stat.triples || 0;
+  homeRuns += stat.homeRuns || 0;
+  rbi += stat.rbi || 0;
+  walks += stat.baseOnBalls || 0;
+  strikeOuts += stat.strikeOuts || 0;
+  hitByPitch += stat.hitByPitch || 0;
+  sacrificeFlies += stat.sacFlies || 0;
+  stolenBases += stat.stolenBases || 0;
+  caughtStealing += stat.caughtStealing || 0;
+  totalBases += stat.totalBases || 0;
+}
 
     const obpDenominator =
       atBats + walks + hitByPitch + sacrificeFlies;
@@ -263,9 +279,23 @@ if (startDate) {
     res.end(
       JSON.stringify({
         question,
-        player: player.fullName,
-      games: games.length,
+player: player.fullName,
+games: games.length,
 season,
+atBats,
+hits,
+runs,
+doubles,
+triples,
+homeRuns,
+rbi,
+walks,
+strikeOuts,
+stolenBases,
+caughtStealing,
+battingAverage: battingAverage.toFixed(3),
+onBasePercentage: obp.toFixed(3),
+sluggingPercentage: slg.toFixed(3),
 OPS: ops.toFixed(3)
       })
     );
