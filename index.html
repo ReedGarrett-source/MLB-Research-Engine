@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MLB Research Engine</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -11,15 +12,16 @@
     <h1>MLB Research Engine</h1>
 
     <p>Ask a question about MLB.</p>
+<div class="search-box">
+  <input
+    type="text"
+    id="question"
+    placeholder="Ask an MLB question..."
+  >
 
-    <input
-      type="text"
-      id="question"
-      placeholder="Ask an MLB question..."
-    >
-
-    <button onclick="askQuestion()">Search</button>
-
+  <button onclick="askQuestion()">Search</button>
+</div>
+    
     <div id="answer"></div>
   </main>
 
