@@ -3,97 +3,196 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Baseball Intelligence</title>
-  <link rel="stylesheet" href="style.css?v=2">
+
+  <title>MLB Research Engine</title>
+
+  <link rel="stylesheet" href="style.css?v=3">
+
+  <script>
+    // Apply saved/system theme before the page loads
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "light") {
+      document.documentElement.classList.add("light");
+    } else if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: light)").matches
+    ) {
+      document.documentElement.classList.add("light");
+    }
+  </script>
 </head>
+
 <body>
+
   <header class="top-bar">
-    <button id="themeToggle" class="theme-toggle">
+
+    <button
+      id="themeToggle"
+      class="theme-toggle"
+      type="button"
+    >
       Light Mode
     </button>
+
   </header>
+
+
   <main>
+
     <section class="hero">
+
       <div class="badge">
         MLB DATA &amp; RESEARCH
       </div>
+
       <h1>
         MLB
         <span>Research Engine</span>
       </h1>
+
       <p>
         Ask questions. Get the numbers.
       </p>
+
     </section>
+
+
     <div class="search-box">
+
       <input
         type="text"
         id="question"
         placeholder="Ask anything about MLB..."
         autocomplete="off"
       >
+
       <button
         onclick="askQuestion()"
         class="search-button"
+        type="button"
       >
         Search
       </button>
+
     </div>
+
+
     <div class="examples">
+
       <span>Try:</span>
+
       <button
         onclick="setQuestion('Pete Alonso HR in his last 10 games')"
+        type="button"
       >
         HR in last 10 games
       </button>
+
       <button
         onclick="setQuestion('Kodai Senga ERA in his last 10 games')"
+        type="button"
       >
         Pitcher ERA
       </button>
+
       <button
         onclick="setQuestion('Juan Soto OPS in his last 15 games')"
+        type="button"
       >
         OPS
       </button>
+
     </div>
+
+
     <div id="answer"></div>
+
   </main>
+
+
+  <footer>
+    MLB Research Engine • MLB data &amp; research
+  </footer>
+
+
   <script src="js/app.js"></script>
+
+
   <script>
+
     const themeToggle =
       document.getElementById("themeToggle");
+
+
     function updateThemeButton() {
+
       const isLight =
-        document.body.classList.contains("light");
+        document.documentElement.classList.contains("light");
+
       themeToggle.textContent =
         isLight
           ? "Dark Mode"
           : "Light Mode";
     }
-    themeToggle.addEventListener("click", function () {
-      document.body.classList.toggle("light");
-      const currentTheme =
-        document.body.classList.contains("light")
-          ? "light"
-          : "dark";
-      localStorage.setItem(
-        "theme",
-        currentTheme
-      );
-      updateThemeButton();
-    });
-    const savedTheme =
-      localStorage.getItem("theme");
-    if (savedTheme === "light") {
-      document.body.classList.add("light");
-    }
-    updateThemeButton();
+
+
+    themeToggle.addEventListener(
+      "click",
+      function () {
+
+        const isCurrentlyLight =
+          document.documentElement.classList.contains("light");
+
+
+        if (isCurrentlyLight) {
+
+          document.documentElement.classList.remove("light");
+
+          document.documentElement.classList.add("dark");
+
+          localStorage.setItem(
+            "theme",
+            "dark"
+          );
+
+        } else {
+
+          document.documentElement.classList.remove("dark");
+
+          document.documentElement.classList.add("light");
+
+          localStorage.setItem(
+            "theme",
+            "light"
+          );
+
+        }
+
+
+        updateThemeButton();
+
+      }
+    );
+
+
     function setQuestion(question) {
-      document.getElementById("question").value =
-        question;
-      document.getElementById("question").focus();
+
+      const input =
+        document.getElementById("question");
+
+      input.value = question;
+
+      input.focus();
+
     }
+
+
+    updateThemeButton();
+
   </script>
+
 </body>
 </html>
