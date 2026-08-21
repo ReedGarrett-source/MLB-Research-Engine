@@ -97,6 +97,139 @@ const last15 = splits
     return;
   }
 }
+ if (req.url.startsWith("/api/mlb/query")) {
+  try {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const question = url.searchParams.get("question");
+
+    if (!question) {
+      res.writeHead(400, {
+        "Content-Type": "application/json"
+      });
+
+      res.end(
+        JSON.stringify({
+          error: "Please provide an MLB question."
+        })
+      );
+
+      return;
+    }
+
+    const match = question.match(
+      /(.+?)\s+(?:ops|avg|obp|slg)\s+(?:in|over|for)\s+(?:his|their|the)?\s*(?:last\s+)?(\d+)\s+games?/i
+    );
+
+    if (!match) {
+      res.writeHead(400, {
+        "Content-Type": "application/json"
+      });
+
+      res.end(
+        JSON.stringify({
+          error: "I don't understand that question yet."
+        })
+      );
+
+      return;
+    }
+
+    const playerName = match[1].trim();
+    const numberOfGames = parseInt(match[2]);
+
+    const playerResponse = await axios.get(
+      `https://statsapi.mlb.com/api/v1/people/search?names=${encodeURIComponent(playerName)}`
+    );
+
+    const player = playerResponse.data.people?.[0];
+
+    if (!player) {
+      res.writeHead(404, {
+        "Content-Type": "application/json"
+      });
+
+      res.end(
+        JSON.stringify({
+          error: `Could not find MLB player: ${playerName}`
+        })
+      );
+
+      return;
+    }
+
+    const statsResponse = await axios.get(
+      `https://statsapi.mlb.com/api/v1/people/${player.id}/stats?stats=gameLog&group=hitting&season=2026`
+    );
+
+    const splits = statsResponse.data.stats?.[0]?.splits || [];
+
+    const games = splits
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .slice(-numberOfGames);
+
+    let atBats = 0;
+    let hits = 0;
+    let walks = 0;
+    let hitByPitch = 0;
+    let sacrificeFlies = 0;
+    let totalBases = 0;
+
+    for (const game of games) {
+      const stat = game.stat;
+
+      atBats += stat.atBats || 0;
+      hits += stat.hits || 0;
+      walks += stat.baseOnBalls || 0;
+      hitByPitch += stat.hitByPitch || 0;
+      sacrificeFlies += stat.sacFlies || 0;
+      totalBases += stat.totalBases || 0;
+    }
+
+    const obpDenominator =
+      atBats + walks + hitByPitch + sacrificeFlies;
+
+    const obp =
+      obpDenominator > 0
+        ? (hits + walks + hitByPitch) / obpDenominator
+        : 0;
+
+    const slg =
+      atBats > 0
+        ? totalBases / atBats
+        : 0;
+
+    const ops = obp + slg;
+
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    });
+
+    res.end(
+      JSON.stringify({
+        question,
+        player: player.fullName,
+        games: games.length,
+        OPS: ops.toFixed(3)
+      })
+    );
+
+    return;
+
+  } catch (error) {
+    res.writeHead(500, {
+      "Content-Type": "application/json"
+    });
+
+    res.end(
+      JSON.stringify({
+        error: "Unable to process MLB question."
+      })
+    );
+  }
+
+  return;
+}
   if (req.url.startsWith("/api/mlb/games/")) {
   try {
     const playerId = req.url.replace("/api/mlb/games/", "");
