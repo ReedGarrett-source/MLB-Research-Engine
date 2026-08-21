@@ -1,4 +1,5 @@
 const API_URL = "https://mlb-research-engine.onrender.com/";
+alert("NEW APP.JS LOADED");
 
 async function askQuestion() {
   const question = document.getElementById("question").value;
