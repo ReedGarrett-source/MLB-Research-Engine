@@ -395,7 +395,7 @@ const server = http.createServer(async (req, res) => {
       value,
       stats: seasonStats,
       answer:
-        `${player.fullName had ${value ?? "no recorded value"} ${formatStatName(stat)} in ${season}.`
+        `${player.fullName} had ${value ?? "no recorded value"} ${formatStatName(stat)} in ${season}.`
     };
   }
 
