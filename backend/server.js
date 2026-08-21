@@ -94,6 +94,7 @@ const server = http.createServer(async (req, res) => {
       );
 
       return;
+
     } catch (error) {
       res.writeHead(500, {
         "Content-Type": "application/json"
@@ -152,16 +153,33 @@ const server = http.createServer(async (req, res) => {
         }
       }
 
+      /*
+       * HITTING QUESTIONS
+       *
+       * Now supports:
+       * OPS, AVG, OBP, SLG
+       * HR, H, R, RBI, BB, K, SB, CS
+       * 2B, 3B, AB
+       * hits, runs, home runs, walks, etc.
+       */
+
       const match = question.match(
-        /(.+?)\s+(?:ops|avg|obp|slg)\s+(?:in|over|for)\s+(?:his|their|the)?\s*(?:last\s+)?(\d+)\s+games?/i
+        /(.+?)\s+(?:ops|avg|obp|slg|hr|h|r|rbi|bb|k|sb|cs|2b|3b|ab|hits|runs|home runs|walks|strikeouts|stolen bases|caught stealing|at bats|doubles|triples)\s+(?:in|over|for)\s+(?:his|their|the)?\s*(?:last\s+)?(\d+)\s+games?/i
       );
+
+      /*
+       * PITCHING QUESTIONS
+       *
+       * Supports:
+       * ERA, WHIP, strikeouts, K, walks, BB
+       */
 
       const pitchingMatch = question.match(
         /(.+?)\s+(?:era|whip|strikeouts|k|walks|bb)\s+(?:in|over|for)\s+(?:his|their|the)?\s*(?:last\s+)?(\d+)\s+(?:games?|starts?)/i
       );
 
       const sincePlayerMatch = question.match(
-        /(.+?)\s+(?:ops|avg|obp|slg)\s+since\s+/i
+        /(.+?)\s+(?:ops|avg|obp|slg|hr|h|r|rbi|bb|k|sb|cs|2b|3b|ab|hits|runs|home runs|walks|strikeouts|stolen bases|caught stealing|at bats|doubles|triples)\s+since\s+/i
       );
 
       if (!match && !pitchingMatch && !sincePlayerMatch) {
@@ -245,13 +263,6 @@ const server = http.createServer(async (req, res) => {
         let walks = 0;
         let strikeOuts = 0;
         let homeRuns = 0;
-
-        /*
-         * MLB represents innings like:
-         * 5.0 = 5 innings
-         * 5.1 = 5 1/3 innings
-         * 5.2 = 5 2/3 innings
-         */
 
         for (const game of games) {
           const stat = game.stat;
