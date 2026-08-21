@@ -1,4 +1,6 @@
-function askQuestion() {
+const API_URL = "https://mlb-research-engine.onrender.com";
+
+async function askQuestion() {
   const question = document.getElementById("question").value;
   const answer = document.getElementById("answer");
 
@@ -7,5 +9,27 @@ function askQuestion() {
     return;
   }
 
-  answer.textContent = "Your question was: " + question;
+  answer.textContent = "Researching MLB data...";
+
+  try {
+    const response = await fetch(
+      `${API_URL}/api/mlb/query?question=${encodeURIComponent(question)}`
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      answer.textContent = data.error || "Something went wrong.";
+      return;
+    }
+
+    answer.innerHTML = `
+      <strong>${data.player}</strong><br><br>
+      Games: ${data.games}<br>
+      OPS: ${data.OPS}
+    `;
+  } catch (error) {
+    answer.textContent =
+      "Unable to connect to the MLB Research Engine.";
+  }
 }
