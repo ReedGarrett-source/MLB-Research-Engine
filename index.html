@@ -8,64 +8,57 @@
 </head>
 <body>
   <header class="top-bar">
-<div class="brand">
-  <span class="brand-dot"></span>
-  BASEBALL INTELLIGENCE
-</div>
-<button id="themeToggle" class="theme-toggle">
-  Light Mode
-</button>
+    <button id="themeToggle" class="theme-toggle">
+      Light Mode
+    </button>
   </header>
   <main>
-<section class="hero">
-  <div class="badge">
-    MLB DATA &amp; RESEARCH
-  </div>
-  <h1>
-    Baseball
-    <span>Intelligence</span>
-  </h1>
-  <p>
-    Ask questions. Get the numbers.
-  </p>
-</section>
-<div class="search-box">
-  <input
-    type="text"
-    id="question"
-    placeholder="Ask anything about MLB..."
-    autocomplete="off"
-  >
-  <button
-    onclick="askQuestion()"
-    class="search-button"
-  >
-    Search
-  </button>
-</div>
-<div class="examples">
-  <span>Try:</span>
-  <button
-    onclick="setQuestion('Pete Alonso HR in his last 10 games')"
-  >
-    HR in last 10 games
-  </button>
-  <button
-    onclick="setQuestion('Kodai Senga ERA in his last 10 games')"
-  >
-    Pitcher ERA
-  </button>
-  <button
-    onclick="setQuestion('Juan Soto OPS in his last 15 games')"
-  >
-    OPS
-  </button>
-</div>
-<div id="answer"></div>
+    <section class="hero">
+      <div class="badge">
+        MLB DATA &amp; RESEARCH
+      </div>
+      <h1>
+        MLB
+        <span>Research Engine</span>
+      </h1>
+      <p>
+        Ask questions. Get the numbers.
+      </p>
+    </section>
+    <div class="search-box">
+      <input
+        type="text"
+        id="question"
+        placeholder="Ask anything about MLB..."
+        autocomplete="off"
+      >
+      <button
+        onclick="askQuestion()"
+        class="search-button"
+      >
+        Search
+      </button>
+    </div>
+    <div class="examples">
+      <span>Try:</span>
+      <button
+        onclick="setQuestion('Pete Alonso HR in his last 10 games')"
+      >
+        HR in last 10 games
+      </button>
+      <button
+        onclick="setQuestion('Kodai Senga ERA in his last 10 games')"
+      >
+        Pitcher ERA
+      </button>
+      <button
+        onclick="setQuestion('Juan Soto OPS in his last 15 games')"
+      >
+        OPS
+      </button>
+    </div>
+    <div id="answer"></div>
   </main>
-  <footer>
-    Baseball Intelligence • MLB data &amp; research
-  </footer>
   <script src="js/app.js"></script>
   <script>
     const themeToggle =
