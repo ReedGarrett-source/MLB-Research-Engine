@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLB Research Engine</title>
+</head>
+
+<body>
+  <main>
+    <h1>MLB Research Engine</h1>
+
+    <p>Ask a question about MLB.</p>
+
+    <input
+      type="text"
+      id="question"
+      placeholder="Ask an MLB question..."
+    >
+
+    <button onclick="askQuestion()">Search</button>
+
+    <div id="answer"></div>
+  </main>
+
+  <script>
+    function askQuestion() {
+      const question = document.getElementById("question").value;
+      const answer = document.getElementById("answer");
+
+      if (!question.trim()) {
+        answer.textContent = "Please enter an MLB question.";
+        return;
+      }
+
+      answer.textContent =
+        "Your question was: " + question;
+    }
+  </script>
+</body>
+</html>
