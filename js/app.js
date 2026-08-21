@@ -1,4 +1,4 @@
-const API_URL = "https://mlb-research-engine.onrender.com/";
+const API_URL = "https://mlb-research-engine.onrender.com";
 
 
 async function askQuestion() {
