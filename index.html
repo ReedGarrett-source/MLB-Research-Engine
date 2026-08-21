@@ -3,40 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>MLB Research Engine</title>
-
+  <title>Baseball Intelligence</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
+  <header class="top-bar">
+<div class="brand">
+  <span class="brand-dot"></span>
+  BASEBALL INTELLIGENCE
+</div>
+<button id="themeToggle" class="theme-toggle">
+  ☀️ Light
+</button>
+  </header>
   <main>
-
-    <h1>MLB Research Engine</h1>
-
-    <p>Ask a question about MLB.</p>
-
-    <div class="search-box">
-
-      <input
-        type="text"
-        id="question"
-        placeholder="Ask an MLB question..."
-        autocomplete="off"
-      >
-
-      <button onclick="askQuestion()">
-        Search
-      </button>
-
-    </div>
-
-    <div id="answer"></div>
-
+<section class="hero">
+  <div class="badge">
+    ⚾ MLB DATA &amp; RESEARCH
+  </div>
+  <h1>
+    Baseball
+    <span>Intelligence</span>
+  </h1>
+  <p>
+    Ask questions. Get the numbers.
+  </p>
+</section>
+<div class="search-box">
+  <input
+    type="text"
+    id="question"
+    placeholder="Ask anything about MLB..."
+    autocomplete="off"
+  >
+  <button
+    onclick="askQuestion()"
+    class="search-button"
+  >
+    Search
+  </button>
+</div>
+<div class="examples">
+  <span>Try:</span>
+  <button
+    onclick="setQuestion('Pete Alonso HR in his last 10 games')"
+  >
+    HR in last 10 games
+  </button>
+  <button
+    onclick="setQuestion('Kodai Senga ERA in his last 10 games')"
+  >
+    Pitcher ERA
+  </button>
+  <button
+    onclick="setQuestion('Juan Soto OPS in his last 15 games')"
+  >
+    OPS
+  </button>
+</div>
+<div id="answer"></div>
   </main>
-
+  <footer>
+    Baseball Intelligence • MLB data &amp; research
+  </footer>
   <script src="js/app.js"></script>
-
+  <script>
+    const themeToggle =
+      document.getElementById("themeToggle");
+    function updateThemeButton() {
+      const isLight =
+        document.body.classList.contains("light");
+      themeToggle.textContent =
+        isLight
+          ? "🌙 Dark"
+          : "☀️ Light";
+    }
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("light");
+      localStorage.setItem(
+        "theme",
+        document.body.classList.contains("light")
+          ? "light"
+          : "dark"
+      );
+      updateThemeButton();
+    });
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light");
+    }
+    updateThemeButton();
+    function setQuestion(question) {
+      document.getElementById("question").value =
+        question;
+      document.getElementById("question").focus();
+    }
+  </script>
 </body>
 </html>
