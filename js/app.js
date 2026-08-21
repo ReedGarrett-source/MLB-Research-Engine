@@ -1,5 +1,10 @@
 const API_URL = "https://mlb-research-engine.onrender.com";
 
+
+/* =========================
+   REQUESTED STAT
+========================= */
+
 function getRequestedStat(question) {
   const q = question.toLowerCase();
 
@@ -29,20 +34,36 @@ function getRequestedStat(question) {
 }
 
 
-function statLine(label, value, requestedStat) {
+/* =========================
+   STAT CARD
+========================= */
+
+function statCard(label, value, requestedStat) {
+
   if (value === undefined || value === null) {
-    return `${label}: —<br>`;
+    value = "—";
   }
 
-  if (label === requestedStat) {
-    return `<strong>${label}: ${value}</strong><br>`;
-  }
+  const highlight =
+    label === requestedStat
+      ? "highlight"
+      : "";
 
-  return `${label}: ${value}<br>`;
+  return `
+    <div class="stat-card ${highlight}">
+      <div class="stat-label">${label}</div>
+      <div class="stat-value">${value}</div>
+    </div>
+  `;
 }
 
 
+/* =========================
+   ADVANCED STATS
+========================= */
+
 function calculateAdvancedStats(data) {
+
   const AB = Number(data.atBats || 0);
   const H = Number(data.hits || 0);
   const BB = Number(data.walks || 0);
@@ -50,6 +71,7 @@ function calculateAdvancedStats(data) {
   const HR = Number(data.homeRuns || 0);
   const SB = Number(data.stolenBases || 0);
   const CS = Number(data.caughtStealing || 0);
+
   const doubles = Number(data.doubles || 0);
   const triples = Number(data.triples || 0);
 
@@ -63,8 +85,6 @@ function calculateAdvancedStats(data) {
     doubles +
     (2 * triples) +
     (3 * HR);
-
-  const singles = H - doubles - triples - HR;
 
   const iso =
     AB > 0
@@ -89,7 +109,8 @@ function calculateAdvancedStats(data) {
       ? (H - HR) / babipDenominator
       : 0;
 
-  const sbAttempts = SB + CS;
+  const sbAttempts =
+    SB + CS;
 
   const stolenBasePercentage =
     sbAttempts > 0
@@ -107,137 +128,365 @@ function calculateAdvancedStats(data) {
 }
 
 
-function showAdvancedStats(data, answer) {
-  const advanced = calculateAdvancedStats(data);
+/* =========================
+   ADVANCED STATS DISPLAY
+========================= */
 
-  const existingAdvanced = document.getElementById("advancedStats");
+function toggleAdvancedStats(data) {
 
-  if (existingAdvanced) {
-    existingAdvanced.remove();
-  }
+  const advancedContainer =
+    document.getElementById("advancedStats");
 
-  const advancedDiv = document.createElement("div");
+  const button =
+    document.getElementById("advancedButton");
 
-  advancedDiv.id = "advancedStats";
-
-  advancedDiv.innerHTML = `
-    <br>
-    <strong>Advanced Stats</strong><br><br>
-
-    PA: ${advanced.PA}<br>
-    BB%: ${advanced.BBPercent}<br>
-    K%: ${advanced.KPercent}<br>
-    ISO: ${advanced.ISO}<br>
-    BABIP: ${advanced.BABIP}<br>
-    SB%: ${advanced.SBPercent}<br>
-  `;
-
-  answer.appendChild(advancedDiv);
-}
-
-
-async function askQuestion() {
-  const question = document.getElementById("question").value;
-  const answer = document.getElementById("answer");
-
-  if (!question.trim()) {
-    answer.textContent = "Please enter an MLB question.";
+  if (!advancedContainer) {
     return;
   }
 
-  answer.textContent = "Researching MLB data...";
+  if (advancedContainer.classList.contains("open")) {
+
+    advancedContainer.classList.remove("open");
+
+    button.textContent =
+      "View Advanced Stats";
+
+    return;
+  }
+
+  const advanced =
+    calculateAdvancedStats(data);
+
+  advancedContainer.innerHTML = `
+
+    <div class="stat-section">
+
+      <div class="stat-section-title">
+        Advanced Stats
+      </div>
+
+      <div class="stat-grid">
+
+        ${statCard("PA", advanced.PA)}
+
+        ${statCard("BB%", advanced.BBPercent)}
+
+        ${statCard("K%", advanced.KPercent)}
+
+        ${statCard("ISO", advanced.ISO)}
+
+        ${statCard("BABIP", advanced.BABIP)}
+
+        ${statCard("SB%", advanced.SBPercent)}
+
+      </div>
+
+    </div>
+
+  `;
+
+  advancedContainer.classList.add("open");
+
+  button.textContent =
+    "Hide Advanced Stats";
+}
+
+
+/* =========================
+   RENDER HITTING RESULTS
+========================= */
+
+function renderHittingResults(data, requestedStat) {
+
+  return `
+
+    <div class="player-header">
+
+      <div class="player-name">
+        ${data.player}
+      </div>
+
+      <div class="sample-size">
+        ${data.games} games
+      </div>
+
+    </div>
+
+
+    <div class="stat-section">
+
+      <div class="stat-section-title">
+        Basic Stats
+      </div>
+
+      <div class="stat-grid">
+
+        ${statCard("AB", data.atBats, requestedStat)}
+        ${statCard("H", data.hits, requestedStat)}
+        ${statCard("R", data.runs, requestedStat)}
+        ${statCard("2B", data.doubles, requestedStat)}
+
+        ${statCard("3B", data.triples, requestedStat)}
+        ${statCard("HR", data.homeRuns, requestedStat)}
+        ${statCard("RBI", data.rbi, requestedStat)}
+        ${statCard("BB", data.walks, requestedStat)}
+
+        ${statCard("K", data.strikeOuts, requestedStat)}
+        ${statCard("SB", data.stolenBases, requestedStat)}
+        ${statCard("CS", data.caughtStealing, requestedStat)}
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-section">
+
+      <div class="stat-section-title">
+        Slash Line
+      </div>
+
+      <div class="stat-grid">
+
+        ${statCard("AVG", data.battingAverage, requestedStat)}
+        ${statCard("OBP", data.onBasePercentage, requestedStat)}
+        ${statCard("SLG", data.sluggingPercentage, requestedStat)}
+        ${statCard("OPS", data.OPS, requestedStat)}
+
+      </div>
+
+    </div>
+
+
+    <button
+      id="advancedButton"
+      class="advanced-toggle"
+    >
+      View Advanced Stats
+    </button>
+
+
+    <div
+      id="advancedStats"
+      class="advanced-stats"
+    ></div>
+
+  `;
+}
+
+
+/* =========================
+   RENDER PITCHING RESULTS
+========================= */
+
+function renderPitchingResults(data, requestedStat) {
+
+  return `
+
+    <div class="player-header">
+
+      <div class="player-name">
+        ${data.player}
+      </div>
+
+      <div class="sample-size">
+        ${data.games} games
+      </div>
+
+    </div>
+
+
+    <div class="stat-section">
+
+      <div class="stat-section-title">
+        Basic Stats
+      </div>
+
+      <div class="stat-grid">
+
+        ${statCard("IP", data.inningsPitched, requestedStat)}
+        ${statCard("ER", data.earnedRuns, requestedStat)}
+        ${statCard("H", data.hitsAllowed, requestedStat)}
+        ${statCard("BB", data.walks, requestedStat)}
+
+        ${statCard("K", data.strikeOuts, requestedStat)}
+        ${statCard("HR", data.homeRuns, requestedStat)}
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-section">
+
+      <div class="stat-section-title">
+        Pitching Line
+      </div>
+
+      <div class="stat-grid">
+
+        ${statCard("ERA", data.ERA, requestedStat)}
+        ${statCard("WHIP", data.WHIP, requestedStat)}
+
+      </div>
+
+    </div>
+
+
+    <button
+      id="advancedButton"
+      class="advanced-toggle"
+    >
+      View Advanced Stats
+    </button>
+
+
+    <div
+      id="advancedStats"
+      class="advanced-stats"
+    >
+
+      <div class="stat-section">
+
+        <div class="stat-section-title">
+          Advanced Stats
+        </div>
+
+        <div class="stat-grid">
+
+          ${statCard("K", data.strikeOuts)}
+          ${statCard("BB", data.walks)}
+          ${statCard("HR", data.homeRuns)}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+}
+
+
+/* =========================
+   ASK QUESTION
+========================= */
+
+async function askQuestion() {
+
+  const question =
+    document.getElementById("question").value;
+
+  const answer =
+    document.getElementById("answer");
+
+
+  if (!question.trim()) {
+
+    answer.textContent =
+      "Please enter an MLB question.";
+
+    return;
+  }
+
+
+  answer.textContent =
+    "Researching MLB data...";
+
 
   try {
-    const response = await fetch(
-      `${API_URL}/api/mlb/query?question=${encodeURIComponent(question)}`
-    );
 
-    const data = await response.json();
+    const response =
+      await fetch(
+        `${API_URL}/api/mlb/query?question=${encodeURIComponent(question)}`
+      );
+
+
+    const data =
+      await response.json();
+
 
     if (!response.ok) {
+
       answer.textContent =
-        data.error || "Something went wrong.";
+        data.error ||
+        "Something went wrong.";
+
       return;
     }
 
-    const requestedStat = getRequestedStat(question);
 
-    // PITCHING RESULTS
+    const requestedStat =
+      getRequestedStat(question);
+
+
+    /* =========================
+       PITCHING
+    ========================= */
+
     if (data.ERA !== undefined) {
 
-      answer.innerHTML = `
-        <strong>${data.player}</strong><br><br>
-
-        ${statLine("Games", data.games, requestedStat)}
-        ${statLine("IP", data.inningsPitched, requestedStat)}
-        ${statLine("ER", data.earnedRuns, requestedStat)}
-        ${statLine("H", data.hitsAllowed, requestedStat)}
-        ${statLine("BB", data.walks, requestedStat)}
-        ${statLine("K", data.strikeOuts, requestedStat)}
-        ${statLine("HR", data.homeRuns, requestedStat)}
-
-        <br>
-
-        ${statLine("ERA", data.ERA, requestedStat)}
-        ${statLine("WHIP", data.WHIP, requestedStat)}
-
-        <br>
-
-        <button id="advancedButton">
-          View Advanced Stats
-        </button>
-      `;
+      answer.innerHTML =
+        renderPitchingResults(
+          data,
+          requestedStat
+        );
 
       const advancedButton =
-        document.getElementById("advancedButton");
+        document.getElementById(
+          "advancedButton"
+        );
 
-      advancedButton.addEventListener("click", () => {
-        advancedButton.textContent =
-          "Advanced Stats Coming Soon";
-      });
+      advancedButton.addEventListener(
+        "click",
+        () => {
+
+          const advanced =
+            document.getElementById(
+              "advancedStats"
+            );
+
+          advanced.classList.toggle("open");
+
+          advancedButton.textContent =
+            advanced.classList.contains("open")
+              ? "Hide Advanced Stats"
+              : "View Advanced Stats";
+        }
+      );
 
       return;
     }
 
 
-    // HITTING RESULTS
-    answer.innerHTML = `
-      <strong>${data.player}</strong><br><br>
+    /* =========================
+       HITTING
+    ========================= */
 
-      ${statLine("Games", data.games, requestedStat)}
-      ${statLine("AB", data.atBats, requestedStat)}
-      ${statLine("H", data.hits, requestedStat)}
-      ${statLine("R", data.runs, requestedStat)}
-      ${statLine("2B", data.doubles, requestedStat)}
-      ${statLine("3B", data.triples, requestedStat)}
-      ${statLine("HR", data.homeRuns, requestedStat)}
-      ${statLine("RBI", data.rbi, requestedStat)}
-      ${statLine("BB", data.walks, requestedStat)}
-      ${statLine("K", data.strikeOuts, requestedStat)}
-      ${statLine("SB", data.stolenBases, requestedStat)}
-      ${statLine("CS", data.caughtStealing, requestedStat)}
+    answer.innerHTML =
+      renderHittingResults(
+        data,
+        requestedStat
+      );
 
-      <br>
-
-      ${statLine("AVG", data.battingAverage, requestedStat)}
-      ${statLine("OBP", data.onBasePercentage, requestedStat)}
-      ${statLine("SLG", data.sluggingPercentage, requestedStat)}
-      ${statLine("OPS", data.OPS, requestedStat)}
-
-      <br>
-
-      <button id="advancedButton">
-        View Advanced Stats
-      </button>
-    `;
 
     const advancedButton =
-      document.getElementById("advancedButton");
+      document.getElementById(
+        "advancedButton"
+      );
 
-    advancedButton.addEventListener("click", () => {
-      showAdvancedStats(data, answer);
-      advancedButton.textContent = "Advanced Stats";
-    });
+
+    advancedButton.addEventListener(
+      "click",
+      () => {
+
+        toggleAdvancedStats(
+          data
+        );
+
+      }
+    );
+
 
   } catch (error) {
 
@@ -245,5 +494,7 @@ async function askQuestion() {
 
     answer.textContent =
       "Unable to connect to the MLB Research Engine.";
+
   }
+
 }
