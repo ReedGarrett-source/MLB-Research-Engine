@@ -306,7 +306,10 @@ OPS: ops.toFixed(3)
 
     return;
 
-  } catch (error) {
+} catch (error) {
+  console.error("MLB query error:", error);
+
+  if (!res.headersSent) {
     res.writeHead(500, {
       "Content-Type": "application/json"
     });
@@ -317,6 +320,7 @@ OPS: ops.toFixed(3)
       })
     );
   }
+}
 
   return;
 }
