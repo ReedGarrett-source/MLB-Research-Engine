@@ -258,6 +258,10 @@ let totalBases = 0;
 
     const obpDenominator =
       atBats + walks + hitByPitch + sacrificeFlies;
+    const battingAverage =
+  atBats > 0
+    ? hits / atBats
+    : 0;
 
     const obp =
       obpDenominator > 0
