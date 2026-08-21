@@ -12,7 +12,9 @@ if (req.url.startsWith("/api/mlb/last15/")) {
 
     const splits = response.data.stats?.[0]?.splits || [];
 
-    const last15 = splits.slice(-15);
+const last15 = splits
+  .sort((a, b) => new Date(a.date) - new Date(b.date))
+  .slice(-15);
 
     let atBats = 0;
     let hits = 0;
